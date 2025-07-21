@@ -8,13 +8,13 @@ import { TYPES } from '../types';
 @injectable()
 class CustomerService implements ICustomerService {
     public uuid: string;
-    private authService: IAuthService;
+    // private authService: IAuthService;
 
     constructor(
-        @inject(TYPES.AuthService) authService: IAuthService,
+        @inject(TYPES.AuthService) private authService: IAuthService,
     ){
         this.uuid = v4();
-        this.authService = authService;
+        // this.authService = authService;
         console.log(`Constructor CustomerService > ${this.uuid}`);
     }
     /**
@@ -25,8 +25,8 @@ class CustomerService implements ICustomerService {
      */
     public getCustomerById(id: string): { id: string; name: string; email: string } {
         // Simulate fetching customer data
-        console.log(`Fetching customer with ID: ${id}`);
-        console.log(`AUTH >>> ${this.authService.getToken().token}`)
+        // console.log(`Fetching customer with ID: ${id}`);
+        console.log(`getCustomerById AUTH >>> ${this.authService.getToken().token}`)
         if (id === '1') {
             return { id: '1', name: 'Alice Smith', email: 'alice.smith@example.com' };
         } else if (id === '2') {

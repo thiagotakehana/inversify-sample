@@ -12,21 +12,40 @@ const port = 3000;
 
 // Get an instance of CustomerController from the Inversify container.
 // Inversify will automatically inject the CustomerService into the controller.
-const customerController = container.get<CustomerController>(TYPES.CustomerController);
-const authenticateToken = (req: any, res: Response, next: NextFunction): void => {
+// const customerController = container.get<CustomerController>(TYPES.CustomerController);
+
+// const customerController = () => container.get<CustomerController>(TYPES.CustomerController);
+
+// BaseService = AllEnvs + IAuthService + Keycloak + Kafka
+// customerContext = CommonService  + CustomerController
+// Customer > OrderService
+
+const getCustomer = (req: any, res: Response): void => {
+    const authHeader = req.headers['authorization'];
 
     const authService = container.get<IAuthService>(TYPES.AuthService);
-    const authHeader = req.headers['authorization'];
-    
     authService.setToken(JSON.stringify(authHeader));
+
+    const customerContext = container.get<CustomerController>(TYPES.CustomerController);
+    customerContext.getCustomer(req, res);
+}
+
+const authenticateToken = (req: any, res: Response, next: NextFunction): void => {
+
+    // const authHeader = req.headers['authorization'];
+    
+    // const authService = container.get<IAuthService>(TYPES.AuthService);
+    // authService.setToken(JSON.stringify(authHeader));
+    
     req.uuid = `req-${v4()}`;
+    // req.authService = authService;
 
     next();
 };
-// authenticateToken.bind(this);
+// authenticateToken.bind(customerController);
 
 // Define the GET endpoint for customers
-app.get('/customer/:id', authenticateToken, customerController.getCustomer);
+app.get('/customer/:id', authenticateToken, getCustomer);
 
 // Start the Express server
 app.listen(port, () => {
